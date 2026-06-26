@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SafeHer - Incident Report</title>
+
+<link href="{% static '/css/report.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+🛡 SafeHer
+</div>
+
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="contacts.html">👨‍👩‍👧 Contacts</a>
+<a href="report.html">📝 Report Incident</a>
+<a href="profile.html">👤 Profile</a>
+<a href="index.html">🚪 Logout</a>
+
+</div>
+
+<div class="main">
+
+<h1 class="page-title">
+Incident Reporting Center
+</h1>
+
+<div class="report-box">
+
+<h2 style="margin-bottom:20px;">
+Submit Incident
+</h2>
+
+<form id="reportForm">
+
+<input
+type="text"
+id="name"
+placeholder="Full Name"
+required>
+
+<input
+type="text"
+id="location"
+placeholder="Incident Location"
+required>
+
+<select id="category">
+
+<option>Harassment</option>
+<option>Stalking</option>
+<option>Unsafe Area</option>
+<option>Theft</option>
+<option>Violence</option>
+<option>Other</option>
+
+</select>
+
+<textarea
+rows="6"
+id="description"
+placeholder="Describe the incident..."
+required></textarea>
+
+<input
+type="file"
+id="imageUpload"
+accept="image/*">
+
+<img
+id="preview"
+class="preview">
+
+<button
+type="submit"
+class="btn">
+
+Submit Report
+
+</button>
+
+</form>
+
+</div>
+
+<div class="status-box">
+
+<h2 style="margin-bottom:20px;">
+Recent Reports
+</h2>
+
+<div id="reportList"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const imageUpload =
+document.getElementById(
+"imageUpload"
+);
+
+const preview =
+document.getElementById(
+"preview"
+);
+
+imageUpload.addEventListener(
+"change",
+function(){
+
+const file =
+this.files[0];
+
+if(file){
+
+preview.src =
+URL.createObjectURL(file);
+
+preview.style.display =
+"block";
+
+}
+
+}
+);
+
+let reports =
+JSON.parse(
+localStorage.getItem(
+"safeherReports"
+)
+) || [];
+
+document
+.getElementById(
+"reportForm"
+)
+.addEventListener(
+"submit",
+function(e){
+
+e.preventDefault();
+
+const report = {
+
+name:
+document.getElementById(
+"name"
+).value,
+
+location:
+document.getElementById(
+"location"
+).value,
+
+category:
+document.getElementById(
+"category"
+).value,
+
+description:
+document.getElementById(
+"description"
+).value,
+
+status:
+"Pending Review",
+
+date:
+new Date()
+.toLocaleString()
+
+};
+
+reports.push(report);
+
+localStorage.setItem(
+"safeherReports",
+JSON.stringify(reports)
+);
+
+alert(
+"Report Submitted Successfully!"
+);
+
+this.reset();
+
+preview.style.display =
+"none";
+
+renderReports();
+
+}
+);
+
+function renderReports(){
+
+const container =
+document.getElementById(
+"reportList"
+);
+
+container.innerHTML = "";
+
+reports
+.slice()
+.reverse()
+.forEach(report=>{
+
+container.innerHTML += `
+
+<div class="status-card">
+
+<h3>${report.category}</h3>
+
+<p><strong>Location:</strong>
+${report.location}</p>
+
+<p><strong>Status:</strong>
+${report.status}</p>
+
+<p><strong>Date:</strong>
+${report.date}</p>
+
+</div>
+
+`;
+
+});
+
+}
+
+renderReports();
+
+</script>
+
+</body>
+</html>

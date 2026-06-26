@@ -1,0 +1,266 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>HumSafe Dashboard</title>
+
+<link href="{% static '/css/dashboard.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<div class="logo">
+🛡 SafeHer
+</div>
+
+<a href="dashboard.html">🏠 Dashboard</a>
+
+<a href="contacts.html">👨‍👩‍👧 Trusted Contacts</a>
+
+<a href="report.html">📝 Report Incident</a>
+
+<a href="profile.html">👤 Profile</a>
+
+<a href="index.html">🚪 Logout</a>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+
+<h1>Dashboard</h1>
+
+<div class="profile">
+Welcome User 👋
+</div>
+
+</div>
+
+<div class="sos-section">
+
+<button class="sos-btn" onclick="activateSOS()">
+🚨 SOS
+</button>
+
+<h3 id="sosStatus"></h3>
+
+</div>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>📍 Live Location</h3>
+
+<p id="locationText">
+Location not fetched
+</p>
+
+<button class="btn" onclick="getLocation()">
+Get Location
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>🚔 Emergency Helpline</h3>
+
+<p>Police: 112</p>
+
+<p>Women Helpline: 1091</p>
+
+<p>Ambulance: 108</p>
+
+</div>
+
+<div class="card">
+
+<h3>👨‍👩‍👧 Trusted Contacts</h3>
+
+<p>
+Manage emergency contacts.
+</p>
+
+<button class="btn">
+View Contacts
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>🎙 Voice SOS</h3>
+
+<p>
+Activate SOS using voice commands.
+</p>
+
+<button class="btn" onclick="voiceSOS()">
+Start Voice SOS
+</button>
+
+</div>
+
+</div>
+
+<div class="activity">
+
+<h2>Recent Activity</h2>
+
+<ul>
+
+<li>Location shared successfully</li>
+
+<li>Trusted contact added</li>
+
+<li>SOS system ready</li>
+
+<li>Incident reporting enabled</li>
+
+</ul>
+
+</div>
+
+<h2 style="margin-bottom:20px;">
+Safety Tips
+</h2>
+
+<div class="tips">
+
+<div class="tip-card">
+Always keep your phone charged.
+</div>
+
+<div class="tip-card">
+Share your trip details with trusted contacts.
+</div>
+
+<div class="tip-card">
+Use emergency SOS during unsafe situations.
+</div>
+
+<div class="tip-card">
+Stay aware of your surroundings.
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function activateSOS(){
+
+let count = 5;
+
+const status =
+document.getElementById("sosStatus");
+
+status.innerHTML =
+"SOS activating in 5 seconds";
+
+let timer = setInterval(()=>{
+
+count--;
+
+status.innerHTML =
+"SOS activating in "
++ count +
+" seconds";
+
+if(count<=0){
+
+clearInterval(timer);
+
+status.innerHTML =
+"🚨 SOS ACTIVATED";
+
+alert(
+"Emergency Alert Activated!"
+);
+
+}
+
+},1000);
+
+}
+
+function getLocation(){
+
+if(navigator.geolocation){
+
+navigator.geolocation.getCurrentPosition(
+
+function(position){
+
+document.getElementById(
+"locationText"
+).innerHTML =
+
+"Latitude: "
++ position.coords.latitude +
+
+"<br>Longitude: "
++ position.coords.longitude;
+
+}
+
+);
+
+}
+
+}
+
+function voiceSOS(){
+
+const SpeechRecognition =
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+
+alert(
+"Voice recognition not supported."
+);
+
+return;
+}
+
+const recognition =
+new SpeechRecognition();
+
+recognition.start();
+
+recognition.onresult =
+function(event){
+
+const speech =
+event.results[0][0].transcript
+.toLowerCase();
+
+if(
+speech.includes("help") ||
+speech.includes("sos")
+){
+
+activateSOS();
+
+}
+
+};
+
+}
+
+</script>
+
+</body>
+</html>

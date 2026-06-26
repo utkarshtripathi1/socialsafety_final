@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SafeHer - Sign Up</title>
+
+<link href="{% static '/css/signup.css' %}" rel="stylesheet">
+
+
+</head>
+<body>
+
+<div class="signup-box">
+
+<div class="logo">🛡</div>
+
+<h2>Create Account</h2>
+
+<form id="signupForm">
+
+<input
+type="text"
+id="fullname"
+placeholder="Full Name"
+required>
+
+<input
+type="email"
+id="email"
+placeholder="Email Address"
+required>
+
+<input
+type="tel"
+id="phone"
+placeholder="Phone Number"
+required>
+
+<input
+type="password"
+id="password"
+placeholder="Password"
+required>
+
+<input
+type="password"
+id="confirmPassword"
+placeholder="Confirm Password"
+required>
+
+<div id="errorMsg" class="error">
+Passwords do not match
+</div>
+
+<div class="checkbox">
+
+<input
+type="checkbox"
+id="terms"
+required>
+
+<label for="terms">
+I agree to the Terms & Conditions
+</label>
+
+</div>
+
+<button type="submit">
+Create Account
+</button>
+
+</form>
+
+<div class="login-link">
+
+Already have an account?
+
+<a href="login.html">
+Login
+</a>
+
+</div>
+
+</div>
+
+<script>
+
+document
+.getElementById("signupForm")
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+const password =
+document.getElementById("password").value;
+
+const confirmPassword =
+document.getElementById("confirmPassword").value;
+
+const error =
+document.getElementById("errorMsg");
+
+if(password !== confirmPassword){
+
+error.style.display="block";
+return;
+
+}
+
+error.style.display="none";
+
+const userData = {
+
+name:
+document.getElementById("fullname").value,
+
+email:
+document.getElementById("email").value,
+
+phone:
+document.getElementById("phone").value
+
+};
+
+localStorage.setItem(
+"safeherUser",
+JSON.stringify(userData)
+);
+
+alert("Account Created Successfully!");
+
+window.location.href="login.html";
+
+});
+
+</script>
+
+</body>
+</html>
