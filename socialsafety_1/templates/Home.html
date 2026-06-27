@@ -1,29 +1,9 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static '/css/home.css' %}">
-</head>
-<body>
-    <nav>
-        <div class="logo">🛡 SafeHer</div>
-        <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="dashboard.html">Dashboard</a></li>
-            <li><a href="contacts.html">Contacts</a></li>
-            <li><a href="report.html">Report</a></li>
-            <li><a href="profile.html">Profile</a></li>
-        </ul>
-        <div>
-            <a href="login.html" class="btn login">Login</a>
-            <a href="signup.html" class="btn signup">Sign Up</a>
-        </div>
-    </nav>
+{% extends 'masterpage.html' %}
 
+
+{% block body %}
+
+<section id="hero">
     <section class="hero">
         <div>
             <h1>Empowering <span>Women's Safety</span><br>Through Technology</h1>
@@ -31,6 +11,8 @@
             <div class="cta">
                 <a href="signup.html" class="btn primary">Get Started</a>
                 <a href="dashboard.html" class="btn secondary">Open Dashboard</a>
+                
+</a>
             </div>
         </div>
 
@@ -42,6 +24,7 @@
             <p>Trusted Contacts</p>
             <p>24/7 Support</p>
         </div>
+    </section>
     </section>
 
     <section>
@@ -74,13 +57,13 @@
         </div>
     </section>
 
-    <section class="portal">
+    <section id="portal" class="portal">
         <h2 class="title">Quick Access Portal</h2>
         <div class="grid">
-            <div class="glass card"><h3>Dashboard</h3><a href="dashboard.html">Open</a></div>
-            <div class="glass card"><h3>Contacts</h3><a href="contacts.html">Open</a></div>
-            <div class="glass card"><h3>Report</h3><a href="report.html">Open</a></div>
-            <div class="glass card"><h3>Profile</h3><a href="profile.html">Open</a></div>
+            <div class="glass card"><h3>Dashboard</h3><a href="/dashboard">Open</a></div>
+            <div class="glass card"><h3>Contacts</h3><a href="/contacts">Open</a></div>
+            <div class="glass card"><h3>Report</h3><a href="/report">Open</a></div>
+            <div class="glass card"><h3>Profile</h3><a href="/profile">Open</a></div>
         </div>
     </section>
 
@@ -115,7 +98,7 @@
     <section style="text-align:center">
         <h2 class="title">Your Safety Matters</h2>
         <p style="margin-bottom:30px;color:#cbd5e1">Join thousands of users using SafeHer.</p>
-        <a href="signup.html" class="btn primary">Create Free Account</a>
+        <a href="/signup" class="btn primary">Create Free Account</a>
     </section>
 
     <div class="footer">
@@ -124,7 +107,8 @@
         <p style="margin-top:10px">© 2026 SafeHer Women's Safety Platform</p>
     </div>
 
-    <a href="dashboard.html" class="sos">SOS</a>
-        
-</body>
-</html>
+    <a href="/dashboard" class="sos">SOS</a>
+     <a href="#portal" class="quick-access-btn">
+                
+                <span> ⚡ Quick Access</span>
+   {% endblock body %}     

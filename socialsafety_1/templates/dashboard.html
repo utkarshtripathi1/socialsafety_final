@@ -19,16 +19,12 @@
 <div class="logo">
 🛡 SafeHer
 </div>
-
-<a href="dashboard.html">🏠 Dashboard</a>
-
-<a href="contacts.html">👨‍👩‍👧 Trusted Contacts</a>
-
-<a href="report.html">📝 Report Incident</a>
-
-<a href="profile.html">👤 Profile</a>
-
-<a href="index.html">🚪 Logout</a>
+<li><a href="/Home">Home</a></li>
+<a href="/dashboard">🏠 Dashboard</a>
+<a href="/contacts">👨‍👩‍👧 Contacts</a>
+<a href="/report">📝 Report Incident</a>
+<a href="/profile">👤 Profile</a>
+<a href="/Home">🚪 Logout</a>
 
 </div>
 
@@ -160,13 +156,13 @@ Stay aware of your surroundings.
 
 function activateSOS(){
 
-let count = 5;
+let count = 3;
 
 const status =
 document.getElementById("sosStatus");
 
 status.innerHTML =
-"SOS activating in 5 seconds";
+"SOS activating in 3 seconds";
 
 let timer = setInterval(()=>{
 
@@ -248,7 +244,7 @@ event.results[0][0].transcript
 .toLowerCase();
 
 if(
-speech.includes("help") ||
+speech.includes("i need help") ||
 speech.includes("sos")
 ){
 
