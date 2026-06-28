@@ -1,24 +1,71 @@
-from django.shortcuts import render
+from django.shortcuts import render ,redirect
 from django.http import HttpResponse
+from django.contrib.auth.forms import AuthenticationForm
+from datetime import datetime
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth.models import User
+from .forms import SignupForm
 
 # Create your views here.
+@login_required
 def Home(request):
     return render(request , "Home.html")
 
-def login(request):
-    return render(request , "login.html")
-    
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("Home")
+
+    form = AuthenticationForm(request, data=request.POST or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect("Home")
+        else:
+            messages.error(request, "Invalid username or password.")
+
+    return render(request, "login.html", {"form": form})
+
+
+@login_required
+def dashboard(request):
+    return render(request, "dashboard.html")
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
+@login_required
 def profile(request):
     return render(request , "profile.html")
-
+@login_required
 def contact(request):
     return render(request , "contacts.html")
 
-def dashboard(request):
-    return render(request , "dashboard.html")
+
+
+
 
 def signup(request):
-    return render(request , "signup.html")
+    if request.user.is_authenticated:
+        return redirect("home")
 
+    form = SignupForm(request.POST or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data["password"])
+            user.save()
+
+            messages.success(request, "Account created successfully!")
+           
+
+    return render(request, "signup.html", {"form": form})
+@login_required
 def report(request):
     return render(request , "report.html")
