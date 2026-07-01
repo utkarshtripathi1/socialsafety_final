@@ -12,6 +12,13 @@
 
 </head>
 <body>
+    {% if messages %}
+    {% for message in messages %}
+        <script>
+            alert("{{ message }}");
+        </script>
+    {% endfor %}
+{% endif %}
 
 <div class="signup-box">
 
@@ -19,59 +26,14 @@
 
 <h2>Create Account</h2>
 
-<form id="signupForm">
 
-<input
-type="text"
-id="fullname"
-placeholder="Full Name"
-required>
 
-<input
-type="email"
-id="email"
-placeholder="Email Address"
-required>
+<form method="POST">
+    {% csrf_token %}
 
-<input
-type="tel"
-id="phone"
-placeholder="Phone Number"
-required>
+    {{ form.as_p }}
 
-<input
-type="password"
-id="password"
-placeholder="Password"
-required>
-
-<input
-type="password"
-id="confirmPassword"
-placeholder="Confirm Password"
-required>
-
-<div id="errorMsg" class="error">
-Passwords do not match
-</div>
-
-<div class="checkbox">
-
-<input
-type="checkbox"
-id="terms"
-required>
-
-<label for="terms">
-I agree to the Terms & Conditions
-</label>
-
-</div>
-
-<button type="submit">
-Create Account
-</button>
-
+    <button type="submit">Create Account</button>
 </form>
 
 <div class="login-link">
@@ -140,3 +102,15 @@ window.location.href="/login";
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
