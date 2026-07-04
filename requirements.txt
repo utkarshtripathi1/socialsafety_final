@@ -3,3 +3,6 @@ packaging==26.0
 setuptools==82.0.1
 wheel==0.47.0
 whitenoise==6.12.0
+django
+pillow
+psycopg2-binary
