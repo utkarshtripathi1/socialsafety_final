@@ -189,22 +189,25 @@ def receive_sos(request):
     lon = float(data.get("longitude"))
     map_link = f"https://www.google.com/maps?q={lat},{lon}"
 
-    # SAVE SOS
+    # Save SOS
     SOS.objects.create(
         user=request.user,
         latitude=lat,
         longitude=lon
     )
-    trusted_emails = list(
-    Contact.objects.filter(user=request.user)
-    .exclude(email="")
-    .values_list("email", flat=True)
-)
 
+    # Trusted contacts
+    trusted_emails = list(
+        Contact.objects.filter(user=request.user)
+        .exclude(email="")
+        .values_list("email", flat=True)
+    )
+
+    # Nearby users
     profiles = Profile.objects.exclude(user=request.user)
 
     nearby_count = 0
-    email_sent = 0
+    recipients = set(trusted_emails)   # Trusted contacts always included
 
     for p in profiles:
 
@@ -212,47 +215,52 @@ def receive_sos(request):
             continue
 
         d = distance(lat, lon, p.latitude, p.longitude)
+
         print(f"Checking: {p.user.username}")
         print(f"Distance: {d}")
         print(f"Email: {p.email or p.user.email}")
 
-        if d <= 5:  # 5 KM radius
+        if d <= 5:
             nearby_count += 1
 
-            email = p.email
+            email = p.email or p.user.email
 
             if email:
-                print("Inside 5 KM radius")
-                recipients = list(set([email] + trusted_emails))
-                try:
-                    send_mail(
-    subject="🚨 SOS ALERT - Nearby Emergency",
-    message=f"""
-🚨 EMERGENCY ALERT 🚨
-⚠️ Someone is in danger and needs immediate help! 🆘
-📍 Please respond immediately or contact emergency services. 🚑🚓🚒
-⏰ Every second counts. Please act now! 🙏💔
+                recipients.add(email)
+                print("Added nearby user:", email)
 
-Distance: {d:.2f} KM
+    email_sent = 0
+
+    if recipients:
+        try:
+            send_mail(
+                subject="🚨 SOS ALERT - Nearby Emergency",
+                message=f"""
+🚨 EMERGENCY ALERT 🚨
+
+⚠️ Someone is in danger and needs immediate help!
+
+📍 Please respond immediately or contact emergency services.
 
 Location:
 Latitude: {lat}
 Longitude: {lon}
 
-View on Google Maps:
+Google Maps:
 {map_link}
 
-Stay alert.
+Stay alert and stay safe.
 """,
-    from_email=settings.EMAIL_HOST_USER,
-    recipient_list=recipients,
-    fail_silently=False,
-)
-                    email_sent += 1
-                    print("Email sent successfully")
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=list(recipients),
+                fail_silently=False,
+            )
 
-                except Exception as e:
-                    print("Email error:", e)
+            email_sent = len(recipients)
+            print("Email sent to:", recipients)
+
+        except Exception as e:
+            print("Email error:", e)
 
     return JsonResponse({
         "message": "SOS triggered successfully",
