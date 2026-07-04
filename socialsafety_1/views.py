@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
+import threading
 
 from .forms import SignupForm
 from .models import Report, Contact, Profile, SOS
@@ -173,6 +174,22 @@ def distance(lat1, lon1, lat2, lon2):
 
 
 # ===================== SOS API =====================
+
+
+
+def send_sos_email(subject, message, from_email, recipients):
+    try:
+        send_mail(
+            subject,
+            message,
+            from_email,
+            recipients,
+            fail_silently=True,
+        )
+    except Exception as e:
+        print("Email error:", e)
+
+
 @csrf_exempt
 @login_required
 def receive_sos(request):
@@ -207,7 +224,7 @@ def receive_sos(request):
     profiles = Profile.objects.exclude(user=request.user)
 
     nearby_count = 0
-    recipients = set(trusted_emails)   # Trusted contacts always included
+    recipients = set(trusted_emails)
 
     for p in profiles:
 
@@ -231,36 +248,47 @@ def receive_sos(request):
 
     email_sent = 0
 
+    # ================= EMAIL FIX (NON-BLOCKING) =================
+
     if recipients:
-        try:
-            send_mail(
-                subject="🚨 SOS ALERT - Nearby Emergency",
-                message=f"""
+        import threading
+
+        def send_sos_email(subject, message, from_email, recipients):
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    from_email,
+                    recipients,
+                    fail_silently=True,
+                )
+            except Exception as e:
+                print("Email error:", e)
+
+        threading.Thread(
+            target=send_sos_email,
+            args=(
+                "🚨 SOS ALERT - Nearby Emergency",
+                f"""
 🚨 EMERGENCY ALERT 🚨
 
 ⚠️ Someone is in danger and needs immediate help!
 
-📍 Please respond immediately or contact emergency services.
-
-Location:
+📍 Location:
 Latitude: {lat}
 Longitude: {lon}
 
 Google Maps:
 {map_link}
 
-Stay alert and stay safe.
+Please respond immediately or contact emergency services.
 """,
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=list(recipients),
-                fail_silently=False,
+                settings.EMAIL_HOST_USER,
+                list(recipients),
             )
+        ).start()
 
-            email_sent = len(recipients)
-            print("Email sent to:", recipients)
-
-        except Exception as e:
-            print("Email error:", e)
+        email_sent = len(recipients)
 
     return JsonResponse({
         "message": "SOS triggered successfully",
